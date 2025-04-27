@@ -22,11 +22,9 @@ export default function Home({ posts: propPosts }) { // قبول posts كـ prop
   const postsToDisplay = propPosts || contextPosts;
 
   useEffect(() => {
-    if (!token) {
-      setError("لا يوجد توكن! الرجاء تسجيل الدخول.");
-      return;
-    }
+    if (!token) return; // انتظر حتى يتم تحديث التوكن
 
+<<<<<<< HEAD
     if (!propPosts) { // إذا لم يتم تمرير منشورات، قم بجلبها
       const fetchPosts = async () => {
         try {
@@ -57,6 +55,37 @@ export default function Home({ posts: propPosts }) { // قبول posts كـ prop
       fetchPosts();
     }
   }, [pageIndex, pageSize, token, propPosts]);
+=======
+    const fetchPosts = async () => {
+        try {
+            const apiUrl = `https://ourheritage.runasp.net/api/Articles?PageIndex=${pageIndex}&PageSize=${pageSize}`;
+            const response = await axios.get(apiUrl, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (response.status === 200) {
+                setPosts(response.data.items || response.data);
+            } else {
+                setError('لا توجد منشورات حالياً.');
+            }
+        } catch (err) {
+            console.error('خطأ في جلب المنشورات:', err);
+            if (err.response?.status === 401) {
+                setError('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مجددًا.');
+                localStorage.removeItem('userToken');
+            } else {
+                setError('حدث خطأ أثناء جلب المنشورات. حاول مرة أخرى.');
+            }
+        }
+    };
+
+    fetchPosts();
+}, [pageIndex, pageSize, token]); // تأكد من أن `token` موجود قبل جلب البيانات
+
+>>>>>>> 6fef4e1abb7dfe55287dc1a01738559d4c7a4a9e
 
   const handleLike = (id) => {
     setPosts(prevPosts =>
@@ -71,7 +100,9 @@ export default function Home({ posts: propPosts }) { // قبول posts كـ prop
       prevPosts.map(post =>
         post.id === id ? { ...post, likeCount: post.likeCount + 1 } : post
       )
+    
     );
+
   };
 
   if (error) {
@@ -122,7 +153,7 @@ export default function Home({ posts: propPosts }) { // قبول posts كـ prop
                     <Like post={post} onLike={() => handleLike(post.id)} />
                     <Share />
                     <Comment post={post} />
-                    <Watching />
+                    {/* <Watching /> */}
                   </div>
                   <div className="flex items-center gap-2 text-red-900 w-36">
                     <span className="mr-8">إعادة نشر</span>

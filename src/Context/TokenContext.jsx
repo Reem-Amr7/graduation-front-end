@@ -16,4 +16,8 @@ export default function TokenContextProvider(props) {
             {props.children}
         </TokenContext.Provider>
     );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 6fef4e1abb7dfe55287dc1a01738559d4c7a4a9e
