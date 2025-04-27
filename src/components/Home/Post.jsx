@@ -1,4 +1,3 @@
-// داخل Home.js
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import styles from './Home.module.css';
@@ -11,13 +10,16 @@ import Watching from './watching';
 import { TokenContext } from '../../Context/TokenContext';
 import { usePostContext } from '../../Context/PostContext';
 
-export default function Home() {
+export default function Home({ posts: propPosts }) { // قبول posts كـ prop
   const { token } = useContext(TokenContext);
-  const { posts, setPosts } = usePostContext();
+  const { posts: contextPosts, setPosts } = usePostContext();
   const [error, setError] = useState(null);
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [isOpen, setIsOpen] = useState(false);
+
+  // استخدام propPosts إذا تم تمريرها، وإلا استخدام contextPosts
+  const postsToDisplay = propPosts || contextPosts;
 
   useEffect(() => {
     if (!token) {
@@ -25,34 +27,36 @@ export default function Home() {
       return;
     }
 
-    const fetchPosts = async () => {
-      try {
-        const apiUrl = `https://ourheritage.runasp.net/api/Articles?PageIndex=${pageIndex}&PageSize=${pageSize}`;
-        const response = await axios.get(apiUrl, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json'
+    if (!propPosts) { // إذا لم يتم تمرير منشورات، قم بجلبها
+      const fetchPosts = async () => {
+        try {
+          const apiUrl = `https://ourheritage.runasp.net/api/Articles?PageIndex=${pageIndex}&PageSize=${pageSize}`;
+          const response = await axios.get(apiUrl, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/json'
+            }
+          });
+          console.log("🚀 بيانات المنشورات:", response.data.items);
+          if (response.status === 200) {
+            setPosts(response.data.items || response.data);
+          } else {
+            setError('لا توجد منشورات حالياً.');
           }
-        });
-        console.log("🚀 بيانات المنشورات:", response.data.items);
-        if (response.status === 200) {
-          setPosts(response.data.items || response.data);
-        } else {
-          setError('لا توجد منشورات حالياً.');
+        } catch (err) {
+          console.error('خطأ في جلب المنشورات:', err);
+          if (err.response?.status === 401) {
+            setError('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مجددًا.');
+            localStorage.removeItem('userToken');
+          } else {
+            setError('حدث خطأ أثناء جلب المنشورات. حاول مرة أخرى.');
+          }
         }
-      } catch (err) {
-        console.error('خطأ في جلب المنشورات:', err);
-        if (err.response?.status === 401) {
-          setError('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مجددًا.');
-          localStorage.removeItem('userToken');
-        } else {
-          setError('حدث خطأ أثناء جلب المنشورات. حاول مرة أخرى.');
-        }
-      }
-    };
+      };
 
-    fetchPosts();
-  }, [pageIndex, pageSize, token]);
+      fetchPosts();
+    }
+  }, [pageIndex, pageSize, token, propPosts]);
 
   const handleLike = (id) => {
     setPosts(prevPosts =>
@@ -76,8 +80,8 @@ export default function Home() {
 
   return (
     <div className="p-5">
-      {posts.length > 0 ? (
-        posts.map((post) => (
+      {postsToDisplay.length > 0 ? (
+        postsToDisplay.map((post) => (
           !post.isHidden && ( // تحقق من حالة isHidden
             <div key={post.id} className={`mb-8 p-4 bg-white shadow-md rounded-lg ${styles.leftside}`}>
               <div className="flex items-center gap-2">
