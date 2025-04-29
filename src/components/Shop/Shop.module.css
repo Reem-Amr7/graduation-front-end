@@ -299,3 +299,126 @@
 input[type="range"] {
     accent-color: #A67C52; /* يغيّر لون الشريط والمؤشر */
 }
+
+/* Media Queries للريسبونسيف */
+
+/* شاشات متوسطة (تابلت) */
+@media (max-width: 992px) {
+    .shopContainer {
+      flex-direction: column;
+      padding-top: 4rem;
+    }
+  
+    .filtersSidebar {
+      width: 100%;
+      margin-left: 0;
+      order: -1; /* نقل الفلتر للأعلى */
+    }
+  
+    .productsGrid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  
+    .productImage {
+      width: 100%;
+      height: 180px;
+    }
+  
+    .productInfo h3 {
+      padding-left: 1rem;
+      font-size: 1rem;
+    }
+  
+    .cartButton {
+      margin-left: 2rem;
+      width: 70px;
+      font-size: 0.8rem;
+    }
+  }
+  
+  /* شاشات صغيرة (جوال) */
+  @media (max-width: 768px) {
+    .productsGrid {
+      grid-template-columns: 1fr;
+    }
+  
+    .productPost {
+      padding: 10px;
+    }
+  
+    .productImage {
+      height: 220px;
+    }
+  
+    .filterSection h4 {
+      font-size: 0.9rem;
+    }
+  
+    .filterItem {
+      font-size: 0.85rem;
+    }
+  
+    .priceFilter span {
+      font-size: 0.8rem;
+    }
+  
+    .applyButton {
+      font-size: 0.9rem;
+      padding: 8px;
+    }
+  
+    .pagination button {
+      width: 50px;
+      font-size: 0.8rem;
+    }
+  
+    .productFooter {
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+    }
+  
+    .cartButton {
+      margin-left: 0;
+      width: 100%;
+      justify-content: center;
+    }
+  
+    .price {
+      padding-right: 0;
+      text-align: left;
+      width: 100%;
+    }
+  }
+  
+  /* شاشات صغيرة جدًا */
+  @media (max-width: 480px) {
+    .shopContainer {
+      padding: 15px;
+      padding-top: 4rem;
+      gap: 15px;
+    }
+  
+    .productImage {
+      height: 180px;
+    }
+  
+    .profileImage {
+      width: 35px;
+      height: 35px;
+    }
+  
+    .username {
+      font-size: 0.9rem;
+    }
+  
+    .postDate {
+      font-size: 0.7rem;
+    }
+  
+    .pagination button {
+      width: 45px;
+      padding: 4px 8px;
+    }
+  }
+
